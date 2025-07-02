@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+.brush-stroke {
+  background: url('/brush.svg') no-repeat center;
+  background-size: contain;
+  display: inline-block;
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+.brush-stroke::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/brush.svg') no-repeat center;
+  background-size: contain;
+  z-index: -1;
+}
+
+.font-book{
+  font-family: 'Merriweather';
+}
