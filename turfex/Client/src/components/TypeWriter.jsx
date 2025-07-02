@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const TypeWriter = ({ text, speed = 30 }) => {
+const TypeWriter = ({ text, speed, onDone }) => {
   const [displayedText, setDisplayedText] = useState('');
 
   useEffect(() => {
@@ -12,10 +12,12 @@ const TypeWriter = ({ text, speed = 30 }) => {
         i++;
       } else {
         clearInterval(interval);
+        if (onDone) onDone();  // 👈 Notify parent when done
       }
     }, speed);
+
     return () => clearInterval(interval);
-  }, [text]);
+  }, []);
 
   return <span>{displayedText}</span>;
 };

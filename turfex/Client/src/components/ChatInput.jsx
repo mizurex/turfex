@@ -28,30 +28,11 @@ const ChatInput = ({ onSend }) => {
         placeholder="Write your message..."
       />
 
-      <div className="flex justify-between items-center mt-4">
-        <div className="flex gap-2 text-sm">
-          <select
-            className="border rounded p-2 bg-white"
-            onChange={(e) => (moodRef.current = e.target.value)}
-          >
-            <option value="Casual">Casual</option>
-            <option value="Serious">Serious</option>
-            <option value="Funny">Funny</option>
-          </select>
-
-          <select
-            className="border rounded p-2 bg-white"
-            onChange={(e) => (actionRef.current = e.target.value)}
-          >
-            <option value="Formatting">Formatting</option>
-            <option value="Improving">Improving</option>
-            <option value="Correcting">Correcting</option>
-          </select>
-        </div>
-
+      <div className="flex  justify-end items-center mt-4">
+        
         <button
           onClick={handleSend}
-          className="bg-black text-white rounded-lg px-4 py-2 hover:bg-gray-800"
+          className="bg-stone-950 text-yellow-200 rounded-lg px-4 py-2 cursor-pointer hover:text-white"
         >
           <FaTurnUp />
         </button>

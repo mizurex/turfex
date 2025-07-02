@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 .brush-stroke {
   background: url('/brush.svg') no-repeat center;
