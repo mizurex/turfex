@@ -1,23 +1,28 @@
 import { useEffect, useState } from 'react';
 
-const TypeWriter = ({ text, speed, onDone }) => {
+const TypeWriter = ({ text = '', speed = 30, onDone }) => {
   const [displayedText, setDisplayedText] = useState('');
 
   useEffect(() => {
     let i = 0;
-    setDisplayedText('');
-    const interval = setInterval(() => {
-      if (i < text.length) {
-        setDisplayedText((prev) => prev + text.charAt(i));
-        i++;
-      } else {
-        clearInterval(interval);
-        if (onDone) onDone();  // 👈 Notify parent when done
-      }
-    }, speed);
+    let timeout;
 
-    return () => clearInterval(interval);
-  }, []);
+    setDisplayedText(''); // reset the output
+
+    const type = () => {
+      if (i <= text.length) {
+        setDisplayedText(text.slice(0, i));
+        i++;
+        timeout = setTimeout(type, speed);
+      } else {
+        if (onDone) onDone();
+      }
+    };
+
+    type(); // start typing
+
+    return () => clearTimeout(timeout); // cleanup on unmount
+  }, [text, speed]);
 
   return <span>{displayedText}</span>;
 };

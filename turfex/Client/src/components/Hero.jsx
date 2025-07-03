@@ -1,5 +1,25 @@
+import { SignUp, useClerk, useUser } from '@clerk/clerk-react';
 import { Search, MessageCircle, User, Edit3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Signup } from './SignUp';
 export function Hero(){
+    const navigate = useNavigate();
+    const{isSignedIn} = useUser();
+    const {redirectToSignIn} = useClerk();
+
+
+    const handleOnclick =()=>{
+        if(!isSignedIn){
+          navigate("/signup")
+  
+        }
+        else{
+          navigate("/chat")
+        }
+     
+    }
+    
+
     return(
         <>
          <div className="relative z-10 bg-white shadow-2xl mt-6 px-10 py-10 w-full max-w-7xl rounded-2xl">
@@ -14,6 +34,7 @@ export function Hero(){
             <a href="#" className="border-b-2 border-black">Twitter</a>
           </nav>
           <Search className="text-black w-5 h-5" />
+       
         </div>
 
         {/* Hero Main Content */}
@@ -24,7 +45,9 @@ export function Hero(){
             <p className="text-gray-600 text-sm mb-8">
               Use your favorite model with a clean interface. No clutter, just a focused chat experience.
             </p>
-            <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 px-6 rounded-full shadow">
+            <button 
+            onClick={handleOnclick}
+            className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 px-6 rounded-full shadow">
               Start Chatting
             </button>
           </main>

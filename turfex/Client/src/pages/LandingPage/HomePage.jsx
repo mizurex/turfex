@@ -1,6 +1,6 @@
 
 import { Search, MessageCircle, User, Edit3 } from 'lucide-react';
-import { Hero } from '../components/Hero';
+import { Hero } from '../../components/Hero';
 export function HomePage(){
     return(
          <div className="relative bg-[#fdfdfd] min-h-screen overflow-hidden font-sans flex flex-col justify-center items-center">
