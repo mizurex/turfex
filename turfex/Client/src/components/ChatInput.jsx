@@ -1,89 +1,99 @@
 import { useState, useRef } from 'react';
-import { FaArrowsTurnRight, FaDiamondTurnRight, FaTruckArrowRight, FaTruckPlane, FaTurnUp } from "react-icons/fa6";
-import { ChevronDown } from 'lucide-react';
-import { FaArrowRight } from 'react-icons/fa';
+import { ChevronDown, Settings2 } from 'lucide-react';
+import { FaArrowRight, FaSearchMinus } from 'react-icons/fa';
 
 const ChatInput = ({ onSend }) => {
   const [selectedModel, setSelectedModel] = useState('Gemini');
   const [showOptions, setShowOptions] = useState(false);
+  const [text, setText] = useState(''); 
   const textareaRef = useRef(null);
 
-  const handleInput = () => {
+  const handleOptions = ()=>{
+
+  }
+
+  const handleInput = (e) => {
+    const value = e.target.value;
+    setText(value+selectedOption); 
     textareaRef.current.style.height = 'auto';
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
   };
 
   const handleSend = () => {
-    const text = textareaRef.current?.value;
     if (!text.trim()) return;
-
     onSend({ text, model: selectedModel });
+    setText('');
     textareaRef.current.value = '';
+    textareaRef.current.style.height = 'auto'; // reset height
   };
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
-    setShowOptions(false); // hide dropdown after selecting
+    setShowOptions(false);
   };
 
   return (
-    <div className="w-full bg-gray-50 rounded-xl p-4  border border-gray-200">
+    <div className="w-full bg-gray-50 rounded-xl p-4 border border-black">
       <textarea
         ref={textareaRef}
         className="w-full bg-transparent text-black resize-none focus:outline-none"
         rows={1}
-        onInput={handleInput}
+        value={text}
+        onChange={handleInput}
         placeholder="Write your message..."
       />
 
-      {/* Dropdown */}
-   
+      <div className="flex items-center mt-4 justify-between">
+        {/* Dropdown */}
+        <div className="relative flex space-x-1.5 text-left mt-3">
+          <button
+            onClick={() => setShowOptions(!showOptions)}
+            type="button"
+            className="inline-flex justify-center items-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-black hover:bg-gray-100"
+          >
+            {selectedModel}
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </button>
 
-      {/* Send Button */}
-      <div className="flex  items-center mt-4 justify-between">
-           <div className="relative inline-block text-left mt-3 ">
-        <button
-          onClick={() => setShowOptions(!showOptions)}
-          type="button"
-          className="inline-flex justify-center items-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-black hover:bg-gray-100"
-        >
-          {selectedModel}
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </button>
+          {showOptions && (
+            <ul className="absolute z-10 bottom-full mb-1 font-medium w-45 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+              <li>
+                <button
+                  className="block w-full px-4 py-2 text-left"
+                  onClick={() => handleModelSelect('Gemini')}
+                >
+                  Gemini 2.0 Flash
+                </button>
+              </li>
+              <li>
+                <button className="block w-full px-4 py-2 text-left text-gray-400 cursor-not-allowed" disabled>
+                  GPT-4 (coming soon)
+                </button>
+              </li>
+              <li>
+                <button className="block w-full px-4 py-2 text-left text-gray-400 cursor-not-allowed" disabled>
+                  Claude (coming soon)
+                </button>
+              </li>
+            </ul>
+          )}
+          <div className='pt-2.5'>
+            <button onClick={handleOptions}>
+              <Settings2 />
+            </button>
+            
+          </div>
+        </div>
 
-        {showOptions && (
-<ul className="absolute z-10 bottom-full font-medium mb-0.5 shadow-gray-400 w-45 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-
-            <li>
-              <button
-                className="block w-full px-4 py-2 text-sm text-left cursor-pointer"
-                onClick={() => handleModelSelect('Gemini')}
-              >
-                Gemini
-              </button>
-            </li>
-            <li>
-              <button
-                className="block w-full px-4 py-2 text-sm text-left text-gray-400 cursor-not-allowed"
-                disabled
-              >
-                GPT-4 (coming soon)
-              </button>
-            </li>
-            <li>
-              <button
-                className="block w-full px-4 py-2 text-sm text-left text-gray-400 cursor-not-allowed"
-                disabled
-              >
-                Claude (coming soon)
-              </button>
-            </li>
-          </ul>
-        )}
-      </div>
+        {/* Send Button */}
         <button
           onClick={handleSend}
-          className="bg-stone-950 text-white rounded-lg px-5 py-2 cursor-pointer hover:text-black hover:bg-white hover: border border-black"
+          disabled={!text.trim()}
+          className={`mt-3 px-5 py-2 rounded-lg border transition-colors duration-200 ${
+            text.trim()
+              ? 'bg-black text-white hover:bg-white hover:text-black'
+              : 'bg-gray-300 text-white cursor-not-allowed'
+          }`}
         >
           <FaArrowRight />
         </button>
