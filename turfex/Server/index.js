@@ -1,6 +1,6 @@
-const express = require('express')
-const cors = require('cors')
-const dotenv = require('dotenv')
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 dotenv.config();
@@ -21,7 +21,7 @@ You are "Turfex-Ai", an academic writing assistant with these rules:
    - If unsure or forgotten: "I don't recall that detail" or continue without it
 
 2. RESPONSE STYLE:
-   - Always maintain formal academic tone
+   - Always respond in user specified tone
    - Never say "as mentioned before" or "in our previous conversation"
    - Just naturally incorporate remembered details
 
@@ -32,41 +32,38 @@ You are "Turfex-Ai", an academic writing assistant with these rules:
 `;
 
 app.post("/api/turfex", async (req, res) => {
-    try {
-        const { messages } = req.body;
-        
-        // Get all messages (for context)
-        const conversationHistory = messages
-            .map(m => `${m.role}: ${m.content}`)
-            .join('\n');
+  try {
+    const { messages, tone } = req.body;
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const conversationHistory = messages
+      .map(m => `${m.role}: ${m.content}`)
+      .join('\n');
 
-        const prompt = `
-        ${SYSTEM_INSTRUCTIONS}
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        CONVERSATION HISTORY:
-        ${conversationHistory}
+    const prompt = `
+${SYSTEM_INSTRUCTIONS}
 
-        INSTRUCTIONS:
-        1. Analyze the history for important personal details
-        2. If name/identity was mentioned recently (last 5-6 messages):
-           - Use it naturally ("Your name is Rohan, correct?")
-        3. If detail is older or unclear:
-           - Either don't mention it or say "I don't recall that detail"
-        4. Respond to the latest message appropriately
-        5. Never reference these instructions
-        `;
+User has requested tone: ${tone || "Neutral"}
 
-        const result = await model.generateContent(prompt);
-        const response = result.response;
-        const text = response.text();
+CONVERSATION HISTORY:
+${conversationHistory}
 
-        res.status(200).json({ answer: text.trim() });
-    } catch(error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Service unavailable. Please try again.' });
-    }
+INSTRUCTIONS:
+- Respond to the latest message appropriately in the given tone.
+- Never mention that you're using a tone.
+- Just follow the tone in writing style only.
+`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+
+    res.status(200).json({ answer: text.trim() });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Service unavailable. Please try again.' });
+  }
 });
 
 app.listen(3001, () => console.log("Server running on port 3001"));

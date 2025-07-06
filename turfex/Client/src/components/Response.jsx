@@ -75,7 +75,7 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
   if (!result) return null;
 
   return (
-    <div className="h-full">
+    <div className="h-70 px-5 mt-2.5">
       {/* Top Buttons */}
       <div className="flex justify-end gap-2 mb-2">
         <button onClick={onCopy} title="Copy"><IoMdCopy /></button>
@@ -124,7 +124,7 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
 
    
       {show && (
-        <div className="font-book break-words whitespace-pre-wrap overflow-hidden max-w-full mt-2 p-4 text-[15px] text-[#2c2c2c] bg-[#fdfaf5] font-serif leading-relaxed rounded-md shadow-sm">
+        <div className="font-outfit prose prose-sm pretty py-5 px-4 break-words whitespace-pre-wrap overflow-hidden max-w-full mt-2  text-[17px] text-black bg-[#fdfaf5]   rounded-md shadow-sm">
           {editMode ? (
             <textarea
               ref={textareaRef}
