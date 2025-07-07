@@ -3,19 +3,24 @@
 @plugin "daisyui";
 
 .brush-stroke {
-  background: url('/brush.svg') no-repeat center;
-  background-size: contain;
+  background: url('/paint.svg') no-repeat center;
+  background-size: 1000px 100%; /* Increase width to 1000px, adjust as needed */
   display: inline-block;
   padding: 0 10px;
   position: relative;
-  z-index: 1;
+  z-index: 3;
+  max-width: 100%; /* Allow it to shrink on smaller screens */
+  width: 1000px; /* Set a large width */
+  height: 100px;  /* Adjust height as needed */
+  overflow: hidden; /* Prevent text from overflowing */
+  box-sizing: border-box;
 }
 .brush-stroke::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('/brush.svg') no-repeat center;
-  background-size: contain;
+  background: url('/paint.svg') no-repeat center;
+  background-size: 1000px 100%; /* Match the width */
   z-index: -1;
 }
 

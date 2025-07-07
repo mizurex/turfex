@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { IoMdCopy } from "react-icons/io";
-import { FaHeart } from "react-icons/fa";
+import { FaCopy, FaHeart, FaPen } from "react-icons/fa";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaEdit, FaSave } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa"; // PDF icon
 import { jsPDF } from "jspdf"; // 👈 import jsPDF
 import TypeWriter from './TypeWriter';
-import { Delete, Ellipsis } from 'lucide-react';
+import { Book, Copy, Delete, Ellipsis, Pen, PenIcon } from 'lucide-react';
 
 const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
   const [editMode, setEditMode] = useState(false);
@@ -14,6 +14,7 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
   const [show, setShow] = useState(true);
   const [showOption,setShowOption] = useState(false);
   const textareaRef = useRef(null);
+  const ellipsisRef = useRef(null);
 
   useEffect(() => {
     if (editMode && textareaRef.current) {
@@ -32,6 +33,20 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
     }, 100);
     return () => clearTimeout(timer);
   }, [result]);
+
+  useEffect(() => {
+    const handleClickOutside = (event)=>{
+        if(ellipsisRef.current && !ellipsisRef.current.contains(event.target)){
+          setShowOption(false);
+        }
+    }
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [])
+  
 
   const handleShowOptions = ()=>{
     setShowOption(!showOption);
@@ -75,57 +90,70 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
   if (!result) return null;
 
   return (
-    <div className="h-70 px-5 mt-2.5">
+    <div className="h-70 px-1 mt-2.5">
       {/* Top Buttons */}
       <div className="flex justify-end gap-2 mb-2">
-        <button onClick={onCopy} title="Copy"><IoMdCopy /></button>
+            {typingDone && (
+          editMode ? (
+            <button 
+            className='flex px-2 py-2 rounded-full justify-center gap-1 items-center shadow-md bg-white'
+            onClick={() => setEditMode(false)} title="Save Edits">
+             <Book/> Writing
+            </button>
+          ) : (
+            <button className='flex py-1.5 mt-0.5 items-center justify-center gap-1.5 rounded-full shadow-md bg-white px-3 cursor-pointer' onClick={() => setEditMode(true)} title="Edit Text">
+              <FaPen /> Edit 
+            </button>
+          )
+        )}
+        <div className='mt-2'> 
+
+           <button
+          className='flex items-center cursor-pointer justify-center rounded-full px-3  py-1.5  hover:bg-pink-200 shadow-md bg-white'
+         onClick={onCopy} title="Copy"><FaCopy /></button>
+        </div>
        
-  <div className="relative hover:bg-gray-500 ">
-  
+
+     
+       
+  <div className="relative cursor-pointer mt-2">
   <button
-    className="relative"
+    ref = {ellipsisRef}
     onClick={handleShowOptions}
+    className="flex items-center cursor-pointer justify-center px-2 py-1 hover:bg-pink-200 bg-white rounded-full shadow-md transition-all"
   >
-    <Ellipsis />
+    <Ellipsis className="w-5 h-5" />
   </button>
 
 
   {showOption && (
-    <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded shadow z-10 p-2 space-y-2">
-      <button
-        onClick={handleDownloadPDF}
-        className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded"
-      >
-        <FaFilePdf /> Save as PDF
-      </button>
+<div className=" absolute right-1 mt-2 w-44 rounded-xl bg-white border border-gray-200 shadow-md p-3 space-y-2">
+  <button
+    
+    onClick={handleDownloadPDF}
+    className="flex items-center w-full gap-2 px-3 py-2 text-sm text-black rounded-md hover:bg-gray-100 transition"
+  >
+    <FaFilePdf className="text-red-500" /> Save as PDF
+  </button>
 
-      <button
-        onClick={() => alert("Delete clicked")}
-        className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded"
-      >
-        <Delete /> Delete
-      </button>
-    </div>
+  <button
+    className="flex items-center w-full gap-2 px-3 py-2 text-sm text-black rounded-md hover:bg-gray-100 transition"
+  >
+    <Delete className="text-gray-600" /> Delete
+  </button>
+</div>
+
   )}
 </div>
 
-        {typingDone && (
-          editMode ? (
-            <button onClick={() => setEditMode(false)} title="Save Edits">
-              <FaSave />
-            </button>
-          ) : (
-            <button onClick={() => setEditMode(true)} title="Edit Text">
-              <FaEdit />
-            </button>
-          )
-        )}
+       
       </div>
 
    
       {show && (
-        <div className="font-outfit prose prose-sm pretty py-5 px-4 break-words whitespace-pre-wrap overflow-hidden max-w-full mt-2  text-[17px] text-black bg-[#fdfaf5]   rounded-md shadow-sm">
+        <div className="font-outfit prose prose-sm pretty py-5 px-2 break-words whitespace-pre-wrap overflow-hidden max-w-full mt-2  text-[17px] text-black bg-[#fdfaf5]   rounded-md shadow-sm">
           {editMode ? (
+            
             <textarea
               ref={textareaRef}
               value={editedText}

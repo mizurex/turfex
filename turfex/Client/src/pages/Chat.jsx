@@ -34,49 +34,46 @@ const Chat = () => {
   const handleSave = () => console.log("Saved:", response);
 
   return (
-   <div className="min-h-screen bg-[#FFEFEF] text-black flex pl-1.5 pb-1.5 pt-2.5 gap-0.5  ">
-   <div className='w-fit h-6'>
-     <UserButton/>
-   </div>
-  <main className="w-[101vh] flex flex-col justify-between px-0.5  border-r   ">
+  <div className="min-h-screen bg-[#F0E4D3] text-black flex flex-col lg:flex-row ">
+
+  <div className="absolute top-2 left-2 z-20">
+  <UserButton />
+</div>
+ <main className="w-full lg:w-1/2 flex flex-col justify-between border-r border-gray-300">
+
     <section>
 
-       <div className='pt-[160px] text-center px-8 mx-1.5'>
-      <h2 className="text-5xl font-light ">What can I help you with?</h2>
-      <span className="loading loading-infinity loading-md"></span>
-    </div>
+      <div className="pt-[30vh] text-center px-4 sm:px-8">
+  <h2 className="text-3xl sm:text-5xl font-light">What can I help you with?</h2>
+  <span className="loading loading-infinity loading-md mt-2"></span>
+</div>
     </section>
    
    
-  <section>
-      
-
-  </section>
+ 
 
     <section>
 
-       <div className='px-10 mb-2.5 '>
-      <ChatInput onSend={handleSend} />
-    </div>
+       <div className="px-4 sm:px-10 mb-4">
+  <ChatInput onSend={handleSend} />
+</div>
     </section>
    
   </main>
-      <div className="w-1/2 overflow-auto max-h-[98vh] mb-0.5 ml-3.5">
-    {loading ? (
-   <span className="loading loading-dots loading-xs mt-11"></span>
-
-    ):(
-
+   <div className="w-full lg:w-1/2 overflow-y-auto max-h-[120vh]  mt-4 lg:mt-0">
+  {loading ? (
+    <span className="loading loading-dots loading-xs mt-11"></span>
+  ) : (
     <Response 
-  result={response} 
-  onCopy={handleCopy} 
-  onSave={handleSave}
-  editedText={editedText}
-  setEditedText={setEditedText}
+      result={response} 
+      onCopy={handleCopy} 
+      onSave={handleSave}
+      editedText={editedText}
+      setEditedText={setEditedText}
     />
-  
-    )}
- </div>
+  )}
+</div>
+
   
 </div>
 
