@@ -1,8 +1,8 @@
-export const turfexAi = async(messages,tone)=>{
+export const turfexAi = async(messages,tone,length,level,language)=>{
     const res = await fetch('http://localhost:3001/api/turfex', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages,tone }),
+    body: JSON.stringify({ messages,tone,length,level,language}),
   });
 
   if(!res.ok){

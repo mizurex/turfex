@@ -30,7 +30,7 @@ export function Hero(){
 
     return(
         <>
-         <div className="font-outfit relative z-10 bg-white shadow-2xl mt-6 px-10 py-10 w-full max-w-7xl rounded-2xl">
+        <div className="font-outfit relative z-10 bg-white shadow-2xl mt-6 px-2 py-2 lg:px-10 lg:py-10 w-full max-w-7xl rounded-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-2">
@@ -42,23 +42,18 @@ export function Hero(){
         </div>
 
         {/* Hero Main Content */}
-        <div className=" items-center px-10">
+        <div className=" items-center px-3 lg:px-10">
           {/* Text Content */}
-          <main className=" mx-28 md:mb-0">
-            <span className="text-8xl font-extralight text-black mb-6">Your <strong className='text-[#27391C]'>Minimalistic </strong> AI.</span>
-            <p className="text-gray-600 text-xl mb-2 mt-7 px-6">
+          <main className=" mx-6 md:mb-0 lg:mx-20">
+            <span className="text-5xl lg:text-8xl font-extralight text-black mb-3 lg:mb-6">Your <strong className='text-[#27391C]'>Minimalistic </strong> AI.</span>
+            <p className="text-gray-600 text-xl mb-2 mt-7 leading-relaxed px-1 lg:px-6">
               Use your favorite model with a clean interface. No clutter, just a focused chat experience.
             </p>
-           
-          
-            
           </main>
-
-           <div className='mt-27 '></div>
-         
+           <div className='mt-27 '></div> 
         </div>
       </div>
-      <div className='mr-[150vh]'>
+      <div className='mr-[30vh] lg:mr-[150vh]'>
          <button 
     onClick={handleOnclick}
     className="bg-[#DCC5B2] hover:bg-red-600 hover:text-black cursor-pointer text-[#27391C] font-outfit text-lg font-bold py-3 px-6 rounded-b-full shadow transform  origin-left"
@@ -67,7 +62,7 @@ export function Hero(){
   </button>
       </div>
       {/*  Display Image section*/}
-          <div ref={ref} className="flex justify-center w-full mt-10">
+          <div ref={ref} className="flex justify-center w-[35vh] lg:w-full mt-10">
       <motion.img
         src="/chatUi.png"
         alt="Chat UI Preview"
@@ -81,7 +76,7 @@ export function Hero(){
 <section className="w-full max-w-6xl mt-24 px-4">
 
   
- <h2 className="text-center text-3xl font-medium font-outfit mb-12 pt-3.5 mt-5 text-black">
+ <h2 className="text-center text-3xl font-medium font-outfit mb-12 pt-3.5 mt-2 lg:mt-5 text-black">
   <span className="relative brush-stroke text-stone-950 mt-2.5">Why Use minimal?</span> 
 </h2>
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">

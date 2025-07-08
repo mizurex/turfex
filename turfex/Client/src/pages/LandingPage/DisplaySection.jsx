@@ -5,7 +5,7 @@ export function DisplaySection() {
   <section className="relative bg-white border-1 font-outfit text-black py-2 px-5 rounded-2xl overflow-hidden text-center">
 
 
-  {/* Background decorative blobs */}
+ 
   <div className="absolute top-0 left-0 w-28 h-28 bg-[#D9A299] rounded-br-full z-0"></div>
   <div className="absolute bottom-0 right-0 w-12 h-12 bg-[#D9A299   ] rounded-tl-full z-0 " />
 

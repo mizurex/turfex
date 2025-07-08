@@ -13,12 +13,12 @@ const Chat = () => {
 
 
   
-  const handleSend = async ({ text,tone }) => {
+  const handleSend = async ({ text,tone,length,level,language}) => {
   try {
     setLoading(true);
     const updatedMemory = [...memory, { role: 'user', content: text }];
 
-    const turfAns = await turfexAi(updatedMemory,tone);
+    const turfAns = await turfexAi(updatedMemory,tone,length,level,language);
     const finalMemory = [...updatedMemory, { role: 'model', content: turfAns }];
     setMemory(finalMemory);
     setResponse(turfAns);

@@ -35,19 +35,21 @@ export function HomePage(){
       <Hero/>
 
     <section className="container w-full h-[45vh] overflow-hidden">
-  <div className="w-full h-full flex items-center justify-between space-x-14 bg-gray-100 text-black">
-    <h2 className="text-5xl pl-8">Frequently Asked Questions</h2>
+  <div className="w-full h-full flex flex-col lg:flex-row justify-center items-center lg:justify-between space-x-14 bg-gray-100 text-black">
+   <h2 className="text-3xl lg:text-5xl leading-relaxed mx-10 lg:pl-10 whitespace-nowrap">
+  Frequently Asked Questions
+</h2>
 
-    <div className="mx-3 mt-6 h-full overflow-y-auto">
+    <div className="mx-3 mt-2 lg:mt-6 h-full overflow-hidden">
       <Footer />
     </div>
   </div>
 </section>
-<section className='w-[120vh] py-11'>
+<section className=' w-[48vh] lg:w-[120vh] py-6 lg:py-11'>
   <DisplaySection/>
 </section>
    
-      <div className='w-full '>
+    <div className= 'w-[49vh] lg:w-full '>
         <footer className="footer sm:footer-horizontal bg-neutral text-neutral-content p-10">
   <aside>
     <svg
