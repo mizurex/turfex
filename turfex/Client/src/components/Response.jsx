@@ -3,8 +3,8 @@ import { IoMdCopy } from "react-icons/io";
 import { FaCopy, FaHeart, FaPen } from "react-icons/fa";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaEdit, FaSave } from "react-icons/fa";
-import { FaFilePdf } from "react-icons/fa"; // PDF icon
-import { jsPDF } from "jspdf"; // 👈 import jsPDF
+import { FaFilePdf } from "react-icons/fa"; 
+import { jsPDF } from "jspdf"; // 
 import TypeWriter from './TypeWriter';
 import { Book, Copy, Delete, Ellipsis, Pen, PenIcon } from 'lucide-react';
 
@@ -15,7 +15,7 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
   const [showOption,setShowOption] = useState(false);
   const textareaRef = useRef(null);
   const ellipsisRef = useRef(null);
-
+  const dropdownRef = useRef( null);
   useEffect(() => {
     if (editMode && textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -34,18 +34,28 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
     return () => clearTimeout(timer);
   }, [result]);
 
-  useEffect(() => {
-    const handleClickOutside = (event)=>{
-        if(ellipsisRef.current && !ellipsisRef.current.contains(event.target)){
-          setShowOption(false);
-        }
+ useEffect(() => {
+  const handleClickOutside = (event) => {
+    const clickedEllipsis = ellipsisRef.current?.contains(event.target);
+    const clickedDropdown = dropdownRef.current?.contains(event.target);
+
+    // Close if clicked outside both
+    if (!clickedEllipsis && !clickedDropdown) {
+      setShowOption(false);
     }
-  
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [])
+
+    // If clicked the ellipsis again, toggle
+    if (clickedEllipsis) {
+      setShowOption((prev) => !prev);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+
   
 
   const handleShowOptions = ()=>{
@@ -119,7 +129,7 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
   <div className="relative cursor-pointer mt-2">
   <button
     ref = {ellipsisRef}
-    onClick={handleShowOptions}
+    
     className="flex items-center cursor-pointer justify-center px-2 py-1 hover:bg-pink-200 bg-white rounded-full shadow-md transition-all"
   >
     <Ellipsis className="w-5 h-5" />
@@ -127,7 +137,9 @@ const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
 
 
   {showOption && (
-<div className=" absolute right-1 mt-2 w-44 rounded-xl bg-white border border-gray-200 shadow-md p-3 space-y-2">
+<div
+   ref={dropdownRef}
+  className=" absolute right-1 mt-2 w-44 rounded-xl bg-white border border-gray-200 shadow-md p-3 space-y-2">
   <button
     
     onClick={handleDownloadPDF}
