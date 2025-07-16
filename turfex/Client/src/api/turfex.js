@@ -1,5 +1,5 @@
 export const turfexAi = async(messages,tone,length,level,language)=>{
-    const res = await fetch('https://turfex-5.onrender.com', {
+    const res = await fetch('https://turfex-5.onrender.com/api/turfex', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages,tone,length,level,language}),
