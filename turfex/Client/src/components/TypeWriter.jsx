@@ -20,13 +20,13 @@ const TypeWriter = ({ text = '', speed = 30, onDone }) => {
       }
     };
 
-    type(); // start typing
+    type(); 
 
-    return () => clearTimeout(timeout); // cleanup on unmount
+    return () => clearTimeout(timeout);
   }, [text, speed]);
 
   return (
-    <div className="text-[16px]  text-black font-outfit">
+    <div className="text-[15px]  text-gray-200 ">
 <ReactMarkdown
   components={{
     p: ({ node, ...props }) => (

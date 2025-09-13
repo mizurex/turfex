@@ -12,9 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage/>} />
          <Route path="/signup" element={<Signup />} />
-        
           <Route path="/chat" element={<Chat/>} />
- 
       </Routes>
     </Router>
   );

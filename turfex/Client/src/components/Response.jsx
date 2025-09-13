@@ -1,186 +1,163 @@
 import { useState, useEffect, useRef } from 'react';
-import { IoMdCopy } from "react-icons/io";
-import { FaCopy, FaHeart, FaPen } from "react-icons/fa";
-import { RiTwitterXLine } from "react-icons/ri";
-import { FaEdit, FaSave } from "react-icons/fa";
-import { FaFilePdf } from "react-icons/fa"; 
-import { jsPDF } from "jspdf"; // 
+import { IoMdCopy, IoMdDoneAll } from "react-icons/io";
+import { FaPencilAlt, FaDownload } from "react-icons/fa";
+import { jsPDF } from "jspdf";
 import TypeWriter from './TypeWriter';
-import { Book, Copy, Delete, Ellipsis, Pen, PenIcon } from 'lucide-react';
+import { CopyIcon, ThumbsUp, Book } from 'lucide-react';
 
-const Response = ({ result, onCopy, onSave, editedText, setEditedText }) => {
+const Response = ({ memory, onCopy, editedText, setEditedText, loading }) => {
   const [editMode, setEditMode] = useState(false);
+  const [editModeIndex, setEditModeIndex] = useState(null);
   const [typingDone, setTypingDone] = useState(false);
-  const [show, setShow] = useState(true);
-  const [showOption,setShowOption] = useState(false);
   const textareaRef = useRef(null);
-  const ellipsisRef = useRef(null);
-  const dropdownRef = useRef( null);
+
   useEffect(() => {
-    if (editMode && textareaRef.current) {
+    if (editModeIndex !== null && textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [editMode]);
+  }, [editModeIndex]);
 
-  useEffect(() => {
-    setShow(false);
-    const timer = setTimeout(() => {
-      setEditedText(result);
-      setShow(true);
-      setTypingDone(false);
-      setEditMode(false);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [result]);
+  const handleDownloadPDF = (text) => {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const margin = 20;
+    const maxLineWidth = 170;
 
- useEffect(() => {
-  const handleClickOutside = (event) => {
-    const clickedEllipsis = ellipsisRef.current?.contains(event.target);
-    const clickedDropdown = dropdownRef.current?.contains(event.target);
+    doc.setFont("Times", "Normal");
+    doc.setFontSize(12);
+    doc.setTextColor(33, 33, 33);
 
-    // Close if clicked outside both
-    if (!clickedEllipsis && !clickedDropdown) {
-      setShowOption(false);
-    }
+    const lines = doc.splitTextToSize(text, maxLineWidth);
+    let currentY = 30;
 
-    // If clicked the ellipsis again, toggle
-    if (clickedEllipsis) {
-      setShowOption((prev) => !prev);
-    }
+    doc.text("Turfex AI Result", margin, 20);
+    doc.setDrawColor(200);
+    doc.line(margin, 22, 190, 22);
+
+    lines.forEach((line) => {
+      if (currentY > 280) {
+        doc.addPage();
+        currentY = 20;
+      }
+      doc.text(line, margin, currentY);
+      currentY += 7;
+    });
+
+    doc.save('turfex-output.pdf');
   };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, []);
-
-  
-
-  const handleShowOptions = ()=>{
-    setShowOption(!showOption);
-  }
-
- const handleDownloadPDF = () => {
-  const doc = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4',
-  });
-
-  const margin = 20;
-  const maxLineWidth = 170;
-
-  doc.setFont("Times", "Normal");
-  doc.setFontSize(12);
-  doc.setTextColor(33, 33, 33); // Dark gray text
-
-  const lines = doc.splitTextToSize(editedText || result, maxLineWidth);
-
-  let currentY = 30;
-
-  doc.text("Turfex AI Result", margin, 20);
-  doc.setDrawColor(200);
-  doc.line(margin, 22, 190, 22); // underline title
-
-  lines.forEach((line) => {
-    if (currentY > 280) {
-      doc.addPage();
-      currentY = 20;
-    }
-    doc.text(line, margin, currentY);
-    currentY += 7; // line height
-  });
-
-  doc.save('turfex-output.pdf');
-};
-
-
-  if (!result) return null;
+  if (!memory || memory.length === 0) return null;
 
   return (
-    <div className="h-70 px-1 mt-2.5">
-      {/* Top Buttons */}
-      <div className="flex justify-end gap-2 mb-2">
-            {typingDone && (
-          editMode ? (
-            <button 
-            className='flex px-2 py-2 rounded-full justify-center gap-1 items-center shadow-md bg-white'
-            onClick={() => setEditMode(false)} title="Save Edits">
-             <Book/> Writing
-            </button>
-          ) : (
-            <button className='flex py-1.5 mt-0.5 items-center justify-center gap-1.5 rounded-full shadow-md bg-white px-3 cursor-pointer' onClick={() => setEditMode(true)} title="Edit Text">
-              <FaPen /> Edit 
-            </button>
-          )
-        )}
-        <div className='mt-2'> 
-
-           <button
-          className='flex items-center cursor-pointer justify-center rounded-full px-3  py-1.5  hover:bg-pink-200 shadow-md bg-white'
-         onClick={onCopy} title="Copy"><FaCopy /></button>
+    <div className="px-2 py-4 space-y-6 max-w-full">
+      {memory.map((msg, i) => (
+        <div
+          key={i}
+          className={`flex ${
+            msg.role === "user" ? "justify-end" : "justify-start"
+          }`}
+        >
+          <div
+            className={`py-3 break-words min-w-0 ${
+              msg.role === "user"
+                ? "bg-neutral-100 px-7 rounded-full text-black max-w-[80%]"
+                : "text-black max-w-[90%] w-full"
+            }`}
+          >
+            {msg.role === "model" ? (
+              <>
+                {editMode && editModeIndex === i ? (
+                  <div className="w-full">
+                    <textarea
+                      ref={textareaRef}
+                      value={editedText}
+                      onChange={(e) => setEditedText(e.target.value)}
+                      className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg outline-none resize-none bg-white custom-textarea"
+                      style={{ minWidth: '100%' }}
+                    />
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => handleDownloadPDF(editedText)}
+                        className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      >
+                        <FaDownload className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={onCopy}
+                        className="flex items-center cursor-pointer justify-center px-3 py-1.5 text-neutral-300 rounded-full hover:bg-gray-200 transition-colors"
+                      >
+                        <CopyIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditMode(false);
+                          setEditModeIndex(null);
+                        }}
+                        className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      >
+                        <IoMdDoneAll className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 rounded-full hover:bg-gray-200 transition-colors">
+                        <ThumbsUp className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full">
+                    {i === memory.length - 1 ? (
+                      <TypeWriter
+                        text={msg.content}
+                        speed={5}
+                        onDone={() => setTypingDone(true)}
+                      />
+                    ) : (
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                    )}
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => handleDownloadPDF(msg.content)}
+                        className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors"
+                      >
+                        <FaDownload className="hover:text-neutral-500 w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={onCopy}
+                        className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors"
+                      >
+                        <CopyIcon className="hover:text-neutral-500 w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditedText(msg.content);
+                          setEditMode(true);
+                          setEditModeIndex(i);
+                        }}
+                        className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors"
+                      >
+                        <FaPencilAlt className="hover:text-neutral-500 w-4 h-4" />
+                      </button>
+                      <button className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors">
+                        <ThumbsUp className="hover:text-neutral-500 w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p>{msg.content}</p>
+            )}
+          </div>
         </div>
-       
-
-     
-       
-  <div className="relative cursor-pointer mt-2">
-  <button
-    ref = {ellipsisRef}
-    
-    className="flex items-center cursor-pointer justify-center px-2 py-1 hover:bg-pink-200 bg-white rounded-full shadow-md transition-all"
-  >
-    <Ellipsis className="w-5 h-5" />
-  </button>
-
-
-  {showOption && (
-<div
-   ref={dropdownRef}
-  className=" absolute right-1 mt-2 w-44 rounded-xl bg-white border border-gray-200 shadow-md p-3 space-y-2">
-  <button
-    
-    onClick={handleDownloadPDF}
-    className="flex items-center w-full gap-2 px-3 py-2 text-sm text-black rounded-md hover:bg-gray-100 transition"
-  >
-    <FaFilePdf className="text-red-500" /> Save as PDF
-  </button>
-
-  <button
-    className="flex items-center w-full gap-2 px-3 py-2 text-sm text-black rounded-md hover:bg-gray-100 transition"
-  >
-    <Delete className="text-gray-600" /> Delete
-  </button>
-</div>
-
-  )}
-</div>
-
-       
-      </div>
-
-   
-      {show && (
-        <div className="font-outfit prose prose-sm pretty py-5 px-2 break-words whitespace-pre-wrap overflow-hidden max-w-full mt-2  text-[17px] text-black bg-[#fdfaf5]   rounded-md shadow-sm">
-          {editMode ? (
-            
-            <textarea
-              ref={textareaRef}
-              value={editedText}
-              onChange={(e) => setEditedText(e.target.value)}
-              onInput={(e) => {
-                e.target.style.height = 'auto';
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
-              className="w-full bg-transparent outline-none resize-none overflow-hidden"
-              placeholder="Edit your text..."
-              style={{ transition: 'height 0.2s ease-in-out' }}
-            />
-          ) : (
-            <TypeWriter text={editedText} speed={5} onDone={() => setTypingDone(true)} />
-          )}
+      ))}
+      {loading && (
+        <div className="flex justify-start">
+          <div className="p-3 rounded-xl max-w-[80%] break-words shadow-md bg-gray-100 text-black">
+            <div className="typing">
+              <span className="typing-dot"></span>
+              <span className="typing-dot"></span>
+              <span className="typing-dot"></span>
+            </div>
+          </div>
         </div>
       )}
     </div>
