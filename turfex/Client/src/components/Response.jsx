@@ -3,8 +3,7 @@ import { IoMdCopy, IoMdDoneAll } from "react-icons/io";
 import { FaPencilAlt, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 import MarkdownWriter from './markdown';
-import { CopyIcon, ThumbsUp, Book, Notebook } from 'lucide-react';
-
+import { CopyIcon, ThumbsUp, Notebook } from 'lucide-react';
 const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }) => {
   const [editMode, setEditMode] = useState(false);
   const [editModeIndex, setEditModeIndex] = useState(null);
