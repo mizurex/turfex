@@ -1,12 +1,12 @@
 // pages/Chat.jsx
 import { useState, useEffect, useRef } from 'react';
 
-import Response from '../components/response';
+import Response from '../components/response.jsx';
 import { turfexAi } from '../api/turfex';
 import { useLocalStorage } from '../lib/hooks/storage';
 import { useApiStore } from '../stores/apistore';
 import { Key, Settings, Plus, Trash2 } from 'lucide-react';
-import ChatInput from '../components/ChatInput';
+import ChatInput from '../components/chat-input.jsx';
 
 
 const Chat = () => {
@@ -30,7 +30,7 @@ const Chat = () => {
     setLoading(true);
     forceScrollRef.current = true; // ensure we scroll on user send
     const updatedMemory = [...memory, { role: 'user', content: text }];
-    setMemory(updatedMemory); // show user message immediately
+    setMemory(updatedMemory); 
 
     const turfAns = await turfexAi(updatedMemory,tone,length,level,language,apiKey);
     setMemory((prev) => [...prev, { role: 'model', content: turfAns }]);
