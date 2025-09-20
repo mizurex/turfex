@@ -1,12 +1,12 @@
 // pages/Chat.jsx
 import { useState, useEffect, useRef } from 'react';
-import ChatInput from '../components/chatInput';
+
 import Response from '../components/response';
 import { turfexAi } from '../api/turfex';
 import { useLocalStorage } from '../lib/hooks/storage';
 import { useApiStore } from '../stores/apistore';
-import { Notes } from '../components/notes';
 import { Key, Settings, Plus, Trash2 } from 'lucide-react';
+import ChatInput from '../components/ChatInput';
 
 
 const Chat = () => {
