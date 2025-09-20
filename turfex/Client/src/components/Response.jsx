@@ -2,13 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { IoMdCopy, IoMdDoneAll } from "react-icons/io";
 import { FaPencilAlt, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
-import TypeWriter from './TypeWriter';
-import { CopyIcon, ThumbsUp, Book } from 'lucide-react';
+import MarkdownWriter from './markdown';
+import { CopyIcon, ThumbsUp, Book, Notebook } from 'lucide-react';
 
-const Response = ({ memory, onCopy, editedText, setEditedText, loading }) => {
+const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }) => {
   const [editMode, setEditMode] = useState(false);
   const [editModeIndex, setEditModeIndex] = useState(null);
-  const [typingDone, setTypingDone] = useState(false);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -104,15 +103,10 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading }) => {
                   </div>
                 ) : (
                   <div className="w-full">
-                    {i === memory.length - 1 ? (
-                      <TypeWriter
-                        text={msg.content}
-                        speed={5}
-                        onDone={() => setTypingDone(true)}
-                      />
-                    ) : (
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
-                    )}
+                    <div className='px-0.5'>
+                       <MarkdownWriter text={msg.content}/>
+                    </div>
+                  
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => handleDownloadPDF(msg.content)}
@@ -138,6 +132,13 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading }) => {
                       </button>
                       <button className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors">
                         <ThumbsUp className="hover:text-neutral-500 w-4 h-4" />
+                      </button>
+                      <button 
+                      onClick={() => {
+                        onSave && onSave(msg.content);
+                      }}
+                      className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors">
+                        <Notebook className="hover:text-neutral-500 w-4 h-4" />
                       </button>
                     </div>
                   </div>

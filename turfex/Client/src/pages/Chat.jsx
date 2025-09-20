@@ -1,19 +1,27 @@
 // pages/Chat.jsx
 import { useState, useEffect, useRef } from 'react';
-import ChatInput from '../components/ChatInput';
-import Response from '../components/Response';
-import { UserButton } from '@clerk/clerk-react';
+import ChatInput from '../components/chatInput';
+import Response from '../components/response';
 import { turfexAi } from '../api/turfex';
 import { useLocalStorage } from '../lib/hooks/storage';
+import { useApiStore } from '../stores/apistore';
+import { Notes } from '../components/notes';
+import { Key, Settings, Plus, Trash2 } from 'lucide-react';
+
 
 const Chat = () => {
   const [response, setResponse] = useState('');
   const [loading,setLoading] = useState(false);
   const [editedText,setEditedText] = useState();
   const [memory, setMemory] = useLocalStorage("chatMemory", []);
+  const [notes, setNotes] = useLocalStorage("notes", []);
+  const [openSettings, setOpenSettings] = useState(false);
+  const {apiKey, setApiKey, clearApiKey } = useApiStore();
   const scrollRef = useRef(null);
   const forceScrollRef = useRef(false);
   const bottomRef = useRef(null);
+  const apiKeyInputRef = useRef(null);
+
 
 
   
@@ -24,7 +32,7 @@ const Chat = () => {
     const updatedMemory = [...memory, { role: 'user', content: text }];
     setMemory(updatedMemory); // show user message immediately
 
-    const turfAns = await turfexAi(updatedMemory,tone,length,level,language);
+    const turfAns = await turfexAi(updatedMemory,tone,length,level,language,apiKey);
     setMemory((prev) => [...prev, { role: 'model', content: turfAns }]);
    
   } catch (error) {
@@ -37,7 +45,15 @@ const Chat = () => {
 
 
   const handleCopy = () => navigator.clipboard.writeText(editedText);
-  const handleSave = () => console.log("Saved:", response);
+  const handleSave = (text) => {
+    const content = text || editedText || '';
+    if (!content) return;
+    const now = new Date().toISOString();
+    const firstLine = content.split('\n').find(Boolean) || 'Untitled Note';
+    const title = firstLine.trim().slice(0, 60);
+    const newNote = { id: String(Date.now()), title, content, createdAt: now, updatedAt: now };
+    setNotes([newNote, ...notes]);
+  };
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -54,14 +70,157 @@ const Chat = () => {
     }
   }, [memory, loading]);
 
+  const handleAddApiKey = () => {
+    const key = apiKeyInputRef.current?.value?.trim();
+    if (key) {
+      setApiKey(key);
+      apiKeyInputRef.current.value = '';
+    }
+  };
+
+  const handleDeleteApiKey = () => {
+    clearApiKey();
+  };
+  const handleOpenSettings = () => {
+    if (document.body.style.overflow !== "hidden") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "scroll";
+    }
+    setOpenSettings(prev => !prev);
+  }
   return (
     <div className="min-h-screen bg-white text-black flex flex-col">
-    {/* Top bar */}
-    <div className="absolute top-2 left-2 z-20">
-      <UserButton />
+  
+    
+    <div className="container flex justify-between items-center px-2 border rounded-full mx-auto w-fit mt-5 shadow-sm">
+      <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+      <button className="flex items-center gap-2 px-7 py-0.5 rounded-full text-gray-900">
+        <span className="text-sm font-medium">Chat</span>
+      </button>
+      <button onClick={handleOpenSettings} className="flex items-center gap-2 px-7 py-0.5 rounded-full text-gray-400">
+        <Settings className="w-5 h-5 cursor-pointer" />
+      </button>
     </div>
-    <div ref={scrollRef} className="flex-1 w-full flex justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto scroll-smooth">
-      <div className="w-full sm:w-[90%] lg:w-1/2 py-8 pb-28 space-y-6">
+
+  
+   
+    {openSettings && (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        
+        <div className="bg-white  shadow-xl w-full max-w-3xl max-h-[100vh] ">
+        
+          <div className="sticky top-0 bg-white px-6 py-3 border-b border-gray-200 rounded-t-2xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Settings</h2>
+              <button 
+                onClick={handleOpenSettings}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className='px-2 py-4 text-center'>
+            <h2>Customize your Turfex experience and manage your account settings</h2>
+          </div>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Secure Local Storage</h2>
+              <p className="text-gray-600 mb-4">Your API keys are protected and never leave your device</p>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 pt-2 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Key className='w-4 h-4'/>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">Privacy First</h3>
+                    <p className="text-sm text-gray-600">
+                      API keys are stored locally in your browser and never sent to our servers. They're used only for direct requests to AI providers.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+      
+
+            {/* API Key Input Section */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Google Gemini API Key
+              </label>
+              <div className="flex gap-2">
+                <input
+                  ref={apiKeyInputRef}
+                  type="password"
+                  placeholder={apiKey ? "••••••••••••••••••••••••" : "Enter your Gemini API key"}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent"
+                />
+                {!apiKey &&(
+                     <button
+                  onClick={handleAddApiKey}
+                  className="px-2  bg-black text-white rounded-lg hover:bg-gray-700 text-xs flex items-center"
+                >
+                  Add Key
+                 
+                </button>
+                )}
+             
+                {apiKey && (
+                  <button
+                    onClick={handleDeleteApiKey}
+                    className="px-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-xs flex items-center"
+                  >
+                   Delete
+                
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-500">
+                Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google AI Studio</a>
+              </p>
+            </div>
+
+            {/* Quick Guide Section */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  i
+                </div>
+                <h2 className="text-lg font-semibold text-gray-900">Quick Guide</h2>
+              </div>
+              <p className="text-gray-600 mb-4">Everything you need to know about API key management</p>
+              
+              <div className="space-y-3 text-gray-700">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>API keys are stored securely in your browser's local storage</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>You only need to configure keys for the AI providers you want to use</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>Keys are never shared with VT servers - they go directly to AI providers</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>You can update or remove keys at any time</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    <div ref={scrollRef} className={`flex-1 w-full flex justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto scroll-smooth`}>
+      <div className="w-full sm:w-[90%] lg:w-1/2 py-8 pb-40 space-y-6">
         
           <Response
   memory={memory}   
@@ -75,8 +234,8 @@ const Chat = () => {
       </div>
     </div>
 
-    <div className="w-full flex justify-center bg-white fixed bottom-0 pb-3">
-      <div className="w-full sm:w-[80%] md:w-[70%] lg:w-[50%] h-fit">
+    <div className="w-full flex justify-center bg-white fixed bottom-0 pb-3 z-40">
+      <div className="w-full rounded-md sm:w-[80%] md:w-[70%] lg:w-[50%] h-fit ">
         <ChatInput onSend={handleSend} />
       </div>
     </div>
