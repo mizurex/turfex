@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { IoMdCopy, IoMdDoneAll } from "react-icons/io";
+import { IoMdDoneAll } from "react-icons/io";
 import { FaPencilAlt, FaDownload } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 import MarkdownWriter from './markdown';
-import { CopyIcon, ThumbsUp, Notebook } from 'lucide-react';
-const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }) => {
+import { CopyIcon, ThumbsUp, Notebook, Pencil, Download } from 'lucide-react';
+
+export const ChatResponse = ({ memory, onCopy, editedText, setEditedText, loading, onSave }) => {
   const [editMode, setEditMode] = useState(false);
   const [editModeIndex, setEditModeIndex] = useState(null);
   const textareaRef = useRef(null);
@@ -76,13 +77,13 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => handleDownloadPDF(editedText)}
-                        className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
                       >
                         <FaDownload className="w-4 h-4" />
                       </button>
                       <button
                         onClick={onCopy}
-                        className="flex items-center cursor-pointer justify-center px-3 py-1.5 text-neutral-300 rounded-full hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
                       >
                         <CopyIcon className="w-4 h-4" />
                       </button>
@@ -91,11 +92,11 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }
                           setEditMode(false);
                           setEditModeIndex(null);
                         }}
-                        className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
                       >
                         <IoMdDoneAll className="w-4 h-4" />
                       </button>
-                      <button className="p-2 rounded-full hover:bg-gray-200 transition-colors">
+                      <button className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer">
                         <ThumbsUp className="w-4 h-4" />
                       </button>
                     </div>
@@ -109,13 +110,13 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => handleDownloadPDF(msg.content)}
-                        className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
                       >
-                        <FaDownload className="hover:text-neutral-500 w-4 h-4" />
+                        <Download className="hover:text-neutral-500 w-4 h-4" />
                       </button>
                       <button
                         onClick={onCopy}
-                        className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
                       >
                         <CopyIcon className="hover:text-neutral-500 w-4 h-4" />
                       </button>
@@ -125,18 +126,18 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }
                           setEditMode(true);
                           setEditModeIndex(i);
                         }}
-                        className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
                       >
-                        <FaPencilAlt className="hover:text-neutral-500 w-4 h-4" />
+                        <Pencil className="hover:text-neutral-500 w-4 h-4" />
                       </button>
-                      <button className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors">
+                      <button className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer">
                         <ThumbsUp className="hover:text-neutral-500 w-4 h-4" />
                       </button>
                       <button 
                       onClick={() => {
                         onSave && onSave(msg.content);
                       }}
-                      className="flex items-center cursor-pointer justify-center rounded-full px-3 py-1.5 text-neutral-300 hover:bg-gray-200 transition-colors">
+                      className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer">
                         <Notebook className="hover:text-neutral-500 w-4 h-4" />
                       </button>
                     </div>
@@ -151,17 +152,11 @@ const Response = ({ memory, onCopy, editedText, setEditedText, loading, onSave }
       ))}
       {loading && (
         <div className="flex justify-start">
-          <div className="p-3 rounded-xl max-w-[80%] break-words shadow-md bg-gray-100 text-black">
-            <div className="typing">
-              <span className="typing-dot"></span>
-              <span className="typing-dot"></span>
-              <span className="typing-dot"></span>
-            </div>
-          </div>
+        <span className="loading loading-dots loading-xs"></span>
         </div>
       )}
     </div>
   );
 };
 
-export default Response;
+export default ChatResponse;

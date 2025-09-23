@@ -1,12 +1,12 @@
-// pages/Chat.jsx
 import { useState, useEffect, useRef } from 'react';
 
-import Response from '../components/response.jsx';
 import { turfexAi } from '../api/turfex';
 import { useLocalStorage } from '../lib/hooks/storage';
 import { useApiStore } from '../stores/apistore';
-import { Key, Settings, Plus, Trash2 } from 'lucide-react';
-import ChatInput from '../components/chat-input.jsx';
+import { Airplay, Info, Key, Settings, Trash, X } from 'lucide-react';
+import { ChatInput } from '../components/chat-input.jsx';
+import ChatResponse from '../components/chat-response.jsx';
+
 
 
 const Chat = () => {
@@ -16,7 +16,7 @@ const Chat = () => {
   const [memory, setMemory] = useLocalStorage("chatMemory", []);
   const [notes, setNotes] = useLocalStorage("notes", []);
   const [openSettings, setOpenSettings] = useState(false);
-  const {apiKey, setApiKey, clearApiKey } = useApiStore();
+  const {apiKey, setApiKey, clearApiKey ,clearChatMemory,clearNotes} = useApiStore();
   const scrollRef = useRef(null);
   const forceScrollRef = useRef(false);
   const bottomRef = useRef(null);
@@ -28,7 +28,7 @@ const Chat = () => {
   const handleSend = async ({ text,tone,length,level,language}) => {
   try {
     setLoading(true);
-    forceScrollRef.current = true; // ensure we scroll on user send
+    forceScrollRef.current = true; 
     const updatedMemory = [...memory, { role: 'user', content: text }];
     setMemory(updatedMemory); 
 
@@ -81,6 +81,15 @@ const Chat = () => {
   const handleDeleteApiKey = () => {
     clearApiKey();
   };
+  const handleDeleteData=()=>{
+    try{
+      clearChatMemory();
+      clearNotes();
+      clearApiKey();
+    }catch(error){
+      console.error("Error", error);
+    }
+  }
   const handleOpenSettings = () => {
     if (document.body.style.overflow !== "hidden") {
       document.body.style.overflow = "hidden";
@@ -92,46 +101,49 @@ const Chat = () => {
   return (
     <div className="min-h-screen bg-white text-black flex flex-col">
   
-    
-    <div className="container flex justify-between items-center px-2 border rounded-full mx-auto w-fit mt-5 shadow-sm">
-      <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
-      <button className="flex items-center gap-2 px-7 py-0.5 rounded-full text-gray-900">
-        <span className="text-sm font-medium">Chat</span>
-      </button>
-      <button onClick={handleOpenSettings} className="flex items-center gap-2 px-7 py-0.5 rounded-full text-gray-400">
-        <Settings className="w-5 h-5 cursor-pointer" />
+    <div className="flex items-center justify-between px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl mx-auto w-fit mt-4  transition-all duration-200 ">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          <span className="text-xs font-medium text-gray-600">Active</span>
+        </div>
+        <div className="w-px h-4 bg-gray-200"></div>
+        <button className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+          <Airplay className="w-3.5 h-3.5" />
+          <span className="text-xs font-medium">Chat</span>
+        </button>
+      </div>
+      <button 
+        onClick={handleOpenSettings} 
+        className="flex items-center justify-center w-7 h-7 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 ml-3 cursor-pointer"
+      >
+        <Settings className="w-4 h-4" />
       </button>
     </div>
-
-  
-   
     {openSettings && (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        
-        <div className="bg-white  shadow-xl w-full max-w-3xl max-h-[100vh] ">
-        
-          <div className="sticky top-0 bg-white px-6 py-3 border-b border-gray-200 rounded-t-2xl">
+
+        <div className="bg-white shadow-xl w-full max-w-3xl max-h-[100vh]  flex flex-col">
+
+          <div className="sticky top-0  px-6 pt-2 border-b border-gray-200  rounded-t-2xl">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Settings</h2>
               <button 
                 onClick={handleOpenSettings}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+               <X size={16}/>
               </button>
             </div>
-            <div className='px-2 py-4 text-center'>
+            <div className='px-2 py-4 text-center text-gray-600 font-medium'>
             <h2>Customize your Turfex experience and manage your account settings</h2>
           </div>
           </div>
           
-          <div className="p-6 space-y-6">
+          <div className="p-6 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Secure Local Storage</h2>
               <p className="text-gray-600 mb-4">Your API keys are protected and never leave your device</p>
-              
               <div className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 pt-2 rounded-full flex items-center justify-center flex-shrink-0">
@@ -143,16 +155,21 @@ const Chat = () => {
                       API keys are stored locally in your browser and never sent to our servers. They're used only for direct requests to AI providers.
                     </p>
                   </div>
+                  <div className='ml-auto border-l border-gray-200 pl-4'>
+                    <h2 className='text-sm font-medium text-gray-900 mb-1'>Clear Data </h2>
+                    <p className='text-sm text-gray-600'>This will clear all data from your browser</p>
+                    <div className='flex justify-center'>
+                        <button onClick={handleDeleteData} className='px-4 mt-3 py-2 border border-gray-600 text-red-600 rounded-lg border-red-500 cursor-pointer text-xs flex items-center'>
+                      Delete
+                    </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-      
-
-            {/* API Key Input Section */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-gray-700">
-                Google Gemini API Key
+                 Gemini API Key
               </label>
               <div className="flex gap-2">
                 <input
@@ -174,9 +191,9 @@ const Chat = () => {
                 {apiKey && (
                   <button
                     onClick={handleDeleteApiKey}
-                    className="px-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-xs flex items-center"
+                    className="px-4 py-2 border border-gray-600 text-gray-300 hover:text-red-600 rounded-lg hover:border-red-500 cursor-pointer text-xs flex items-center"
                   >
-                   Delete
+                   <Trash size={16} className='text-red-500'/>
                 
                   </button>
                 )}
@@ -185,12 +202,10 @@ const Chat = () => {
                 Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google AI Studio</a>
               </p>
             </div>
-
-            {/* Quick Guide Section */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-3 h-3 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                  i
+                  <Info size={16}/>
                 </div>
                 <h2 className="text-lg font-semibold text-gray-900">Quick Guide</h2>
               </div>
@@ -219,10 +234,10 @@ const Chat = () => {
         </div>
       </div>
     )}
-    <div ref={scrollRef} className={`flex-1 w-full flex justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto scroll-smooth`}>
+    <div ref={scrollRef} className={`flex-1 w-full flex justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto scroll-smooth custom-scrollbar`}>
       <div className="w-full sm:w-[90%] lg:w-1/2 py-8 pb-40 space-y-6">
         
-          <Response
+          <ChatResponse
   memory={memory}   
   onCopy={handleCopy}
   onSave={handleSave}
@@ -233,7 +248,7 @@ const Chat = () => {
         <div ref={bottomRef} />
       </div>
     </div>
-
+   
     <div className="w-full flex justify-center bg-white fixed bottom-0 pb-3 z-40">
       <div className="w-full rounded-md sm:w-[80%] md:w-[70%] lg:w-[50%] h-fit ">
         <ChatInput onSend={handleSend} />

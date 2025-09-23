@@ -1,29 +1,26 @@
-## Turfex AI – Drop‑in AI Chat UI Template
+## Turfex AI – Instant AI Chat Template (Fork & Go)
 
-Turfex AI is a clean, minimal template that ships a ready‑to‑use AI chat interface. Users can plug in their own API key (stored locally, never sent to our servers), chat with the model, view responses in Markdown, and customize the UI easily.
-
-Use it as a starting point for your own product, internal tool, portfolio demo, or an AI playground.
+This is a casual, plug‑and‑play template for an AI chat app. Fork it, run it, change a few things, and you’ve got an instant API interface you can use for a project, a demo, or just for fun. Bring your own key, or wire it to your own server. Enjoy.
 
 ---
 
-### Highlights
+### Why this template
 
-- **Plug‑and‑play UI**: A polished chat interface out of the box
-- **Bring your own key**: Users paste their own Gemini API key; it’s saved in localStorage
-- **Markdown rendering**: Clean, responsive Markdown with GFM (tables, lists, code, links)
-- **Personal notes**: Save model outputs as notes and export to PDF
-- **Config controls**: Tone, length, academic level, language hooks in the prompt
-- **Local and server keys**: Optionally run with a server key as a fallback
-- **Modern stack**: React + Vite + Tailwind, Node/Express backend
+- **Instant UI**: Clean chat interface out of the box
+- **Bring your own key**: Paste your Gemini API key (stored locally)
+- **Markdown answers**: Tables, lists, code blocks, links handled nicely
+- **Take notes**: Save outputs and export as PDF
+- **Tweak the prompt**: Tone, length, level, language
+- **Flexible**: Use client key, server key, or both
 
 ---
 
-## Quick Start
+## Fork & Go (quick guide)
 
-Clone and install both apps (client + server):
+Clone your fork and install deps (client + server):
 
 ```bash
-git clone <this-repo>
+git clone <your-fork-url>
 cd tufexai/turfex/Server && npm i
 cd ../Client && npm i
 ```
@@ -31,8 +28,7 @@ cd ../Client && npm i
 Run the server (port 3001):
 ```bash
 cd tufexai/turfex/Server
-cp .env.example .env   # create if you want a server fallback key
-# .env
+# If you want a server fallback key, create .env with:
 # GEMINI_API_KEY=your_server_side_key
 npm start
 ```
@@ -43,20 +39,49 @@ cd tufexai/turfex/Client
 npm run dev
 ```
 
-Open the app (printed URL, typically `http://localhost:5173`).
+Open the app (printed URL, usually `http://localhost:5173`).
 
 ---
 
-## Using Your Own API Key (Client‑Side)
+## Use your own API key (client‑side)
 
 - Click the settings icon in the chat header
 - Paste your Google Gemini API key and press Add
 - Your key is stored in the browser (localStorage) and used directly from the client
 - You can delete the key any time; the server fallback key (if configured) will be used instead
 
-Get a Gemini key from `https://aistudio.google.com/app/apikey`.
+Grab a Gemini key from `https://aistudio.google.com/app/apikey`.
 
 ---
+
+## Make it yours (edit anything)
+
+### Server (Express)
+- Where: `turfex/Server/index.js`, helpers in `turfex/Server/utils/*`
+- Do what you want: change routes, add endpoints, call any provider, add auth/rate limits
+- Return whatever shape you like; the client just needs text content for the chat
+- Edit System Prompts
+
+Default API we ship:
+```http
+POST /api/turfex
+{ messages, tone, length, level, language, apiKey? }
+```
+Behavior:
+- If a client key is present, use it
+- Otherwise use the server key (if set)
+- Uses `@google/genai` with `gemini-2.5-flash` by default
+
+### Client (React + Vite + Tailwind)
+- Where: `turfex/Client/src`
+- Edit models and actions: `components/chat-input.jsx`
+- Response rendering (Markdown, buttons): `components/chat-response.jsx`
+- Markdown styles/components: `components/markdown.jsx`
+- Main page & modals: `pages/Chat.jsx`
+- API call: `api/turfex.js`
+- Local key store (Zustand): `stores/apistore.js`
+
+Tip: The Markdown renderer is already mobile‑friendly and supports code blocks, tables, images, and safe links.
 
 ## Project Structure
 
@@ -65,8 +90,8 @@ turfex/
   Client/                 # React app (Vite + Tailwind)
     src/
       components/
-        ChatInput.jsx     # Prompt bar with model selector and actions
-        Response.jsx       # Streaming/rendered responses (Markdown)
+        chat-input.jsx     # Prompt bar with model selector and actions
+        chat-response.jsx  # Rendered responses (Markdown + buttons)
         markdown.jsx       # Markdown renderer (GFM, responsive)
       pages/
         Chat.jsx          # Main chat page (notes modal, settings modal)
@@ -84,8 +109,6 @@ turfex/
 Server (`turfex/Server/.env`):
 - `GEMINI_API_KEY` – optional. If provided, the server will use it when the user hasn’t added a client key.
 
-Client (`turfex/Client/.env` – optional):
-- `VITE_CLERK_PUBLISHABLE_KEY` – if set, Clerk UI (auth) is enabled; otherwise it is hidden.
 
 Nothing else is required to try the template.
 
@@ -126,23 +149,12 @@ The server uses `@google/genai` to call `gemini-2.5-flash` and returns clean tex
 
 ---
 
-## Deploying
+## Deploy
 
 - Client: any static hosting (Vercel, Netlify). Build with `npm run build`.
 - Server: any Node host (Render, Railway, Fly.io, VPS). Ensure `GEMINI_API_KEY` is set.
 
 ---
 
-## Roadmap Ideas (make it yours)
 
-- Add history and named conversations
-- Streaming tokens and partial rendering
-- More models/providers (OpenAI, Claude, local)
-- Image/file uploads and RAG
-- Theming (dark mode, brand colors)
 
----
-
-## License
-
-MIT – use it freely, modify anything, ship products.

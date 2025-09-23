@@ -2,27 +2,6 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 
-.brush-stroke {
-  background: url('/paint.svg') no-repeat center;
-  background-size: 1000px 100%; /* Increase width to 1000px, adjust as needed */
-  display: inline-block;
-  padding: 0 10px;
-  position: relative;
-  z-index: 3;
-  max-width: 100%; /* Allow it to shrink on smaller screens */
-  width: 1000px; /* Set a large width */
-  height: 100px;  /* Adjust height as needed */
-  overflow: hidden; /* Prevent text from overflowing */
-  box-sizing: border-box;
-}
-.brush-stroke::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('/paint.svg') no-repeat center;
-  background-size: 1000px 100%; /* Match the width */
-  z-index: -1;
-}
 
 .font-book{
   font-family: 'Merriweather';
@@ -52,29 +31,8 @@ ol {
   padding-left: 2rem;
 }
 
-.gradient-background {
-  background: linear-gradient(0deg,#e5ecfa,#e7eefc,#d6e2e9,#f7f7ff);
-  background-size: 240% 240%;
-  animation: gradient-animation 4s ease infinite;
 
 
-}
-
-@keyframes gradient-animation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* (Removed custom scrollbar per request) */
-
-/* Typing indicator dots */
 .typing {
   display: inline-flex;
   align-items: center;
