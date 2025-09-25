@@ -3,6 +3,8 @@
 This is a casual, plug‑and‑play template for an AI chat app. Fork it, run it, change a few things, and you’ve got an instant API interface you can use for a project, a demo, or just for fun. Bring your own key, or wire it to your own server. Enjoy.
 
 ---
+![Screenshot_25-9-2025_164731_localhost](https://github.com/user-attachments/assets/47375883-a42c-429c-a5aa-4c233e0f5994)
+![Screenshot_25-9-2025_165459_localhost](https://github.com/user-attachments/assets/f3f86283-09d1-4602-ac97-4540640681ce)
 
 ### Why this template
 
@@ -15,7 +17,7 @@ This is a casual, plug‑and‑play template for an AI chat app. Fork it, run it
 
 ---
 
-## Fork & Go (quick guide)
+## Fork
 
 Clone your fork and install deps (client + server):
 
@@ -39,7 +41,7 @@ cd tufexai/turfex/Client
 npm run dev
 ```
 
-Open the app (printed URL, usually `http://localhost:5173`).
+Open the app ( `http://localhost:5173`).
 
 ---
 
@@ -53,8 +55,6 @@ Open the app (printed URL, usually `http://localhost:5173`).
 Grab a Gemini key from `https://aistudio.google.com/app/apikey`.
 
 ---
-
-## Make it yours (edit anything)
 
 ### Server (Express)
 - Where: `turfex/Server/index.js`, helpers in `turfex/Server/utils/*`
@@ -109,8 +109,6 @@ turfex/
 Server (`turfex/Server/.env`):
 - `GEMINI_API_KEY` – optional. If provided, the server will use it when the user hasn’t added a client key.
 
-
-Nothing else is required to try the template.
 
 ---
 
