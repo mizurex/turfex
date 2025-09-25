@@ -101,7 +101,7 @@ const Chat = () => {
   return (
     <div className="min-h-screen bg-white text-black flex flex-col">
   
-    <div className="flex items-center justify-between px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl mx-auto w-fit mt-4  transition-all duration-200 ">
+    <div className="flex items-center fixed top-4 left-0 right-0 justify-between px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl mx-auto w-fit mt-4  transition-all duration-200 ">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -234,7 +234,7 @@ const Chat = () => {
         </div>
       </div>
     )}
-    <div ref={scrollRef} className={`flex-1 w-full flex justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto scroll-smooth custom-scrollbar`}>
+    <div ref={scrollRef} className={`flex-1 w-full flex justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto scroll-smooth custom-scrollbar pt-10`}>
       <div className="w-full sm:w-[90%] lg:w-1/2 py-8 pb-40 space-y-6">
         
           <ChatResponse
